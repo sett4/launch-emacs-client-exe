@@ -9,12 +9,6 @@ namespace jp.jaro68.emacslauncher
     {
         static void Main(string[] args)
         {
-
-            if (args.Length == 0)
-            {
-                return;
-            }
-
             string targetExecutableName = System.Configuration.ConfigurationManager.AppSettings["targetExecutableName"];
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("select * from Win32_Process where ExecutablePath like '%"+targetExecutableName+"'");
             bool isRunning = false;
@@ -34,6 +28,15 @@ namespace jp.jaro68.emacslauncher
                     executable = AppDomain.CurrentDomain.BaseDirectory + System.Configuration.ConfigurationManager.AppSettings["editorDefault"];
                 }
                 executableArgs = System.Configuration.ConfigurationManager.AppSettings["editorArgs"];
+
+                if (args.Length == 0)
+                {
+                    System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(executable, executableArgs);
+                    startInfo.UseShellExecute = false;
+                    System.Diagnostics.Process.Start(startInfo);
+
+                    return;
+                }
             }
             else
             {
@@ -44,7 +47,6 @@ namespace jp.jaro68.emacslauncher
                 }
                 executableArgs = System.Configuration.ConfigurationManager.AppSettings["emacsClientArgs"];
             }
-
 
             if (System.IO.File.Exists(args[0]) == false)
             {
